@@ -30,7 +30,7 @@ object StreamAssignment {
     df = df.withColumn("action", split(trim(col("message")), "/").getItem(5))
     df = df.withColumn("error_code", concat(split(trim(col("message")), "/").getItem(6), lit("."), split(trim(col("message")), "/").getItem(7)))
     df = df.withColumn("error_code", df("error_code").cast(DoubleType))
-    df.select("fqdn","cpe_id", "action", "error_code" , "message", "timestamp")
+    df = df.select("fqdn","cpe_id", "action", "error_code" , "message", "timestamp")
 
 
     df.writeStream.format("json").option("path", destdir).option("checkpointLocation",checkptdir).outputMode("append").start()
