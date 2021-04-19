@@ -21,7 +21,7 @@ object StreamAssignment {
     //Read message files from src path
     var df = spark.readStream.schema(schema).json(srcdir)
 // filtering and parshing the data
-       df = df.filter(col("message").contains("omwssu")).withColumn("timestamp", split(col("message"), " ").getItem(1)).withColumn("timestamp", concat(trim(split(col("timestamp"), " ").getItem(0)), lit(" "), trim(split(col("timestamp"), " ").getItem(1)))).withColumn("timestamp", date_format($"timestamp", "yyyy-MM-dd'T'HH:mm:ss'Z'"))
+       df = df.filter(col("message").contains("omwssu")).withColumn("timestamp", concat(split(col("message"), " ").getItem(9),lit(" "), split(col("message"), " ").getItem(17))).withColumn("timestamp", date_format($"timestamp", "yyyy-MM-dd'T'HH:mm:ss'Z'"))
 
     //  extracting required field
     df = df.withColumn("message", split(col("message"), "GET").getItem(1)).withColumn("message", split(trim(col("message")), "1.1").getItem(0))
@@ -33,7 +33,7 @@ object StreamAssignment {
     df.select("fqdn","cpe_id", "action", "error_code" , "message", "timestamp")
 
 
-    df.writeStream.format("json").option("path", destdir).option("checkpointLocation",checkptdir).outputMode("append").start().awaitTermination()
+    df.writeStream.format("json").option("path", destdir).option("checkpointLocation",checkptdir).outputMode("append").start()
 
   }
 
